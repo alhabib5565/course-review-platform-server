@@ -10,9 +10,10 @@ const tagSchema = new Schema<TTags>({
         type: Boolean,
         default: false
     }
+}, {
+    _id: false
 })
 
-// const detailsSchema = new Schema <TDe>
 
 const courseSchema = new Schema<TCourse>({
     title: {
@@ -69,6 +70,16 @@ const courseSchema = new Schema<TCourse>({
     }
 })
 
+
+courseSchema.pre('save', function (next) {
+    console.log('model', this)
+    const startDate = new Date(this.startDate)
+    const endDate = new Date(this.endDate)
+    const weeks = 1000 * 60 * 60 * 24 * 7
+    const durationInWeeks = Math.ceil((endDate.getTime() - startDate.getTime()) / weeks)
+    this.durationInWeeks = durationInWeeks
+    next()
+})
 
 export const Course = model<TCourse>("Course", courseSchema)
 
