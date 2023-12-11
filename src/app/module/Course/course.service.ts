@@ -8,6 +8,18 @@ const createCourseIntoDB = async (payload: TCourse) => {
     return result
 }
 
+const getAllCourses = async () => {
+    const result = await Course.find()
+    return result
+}
+
+const getSingleCourse = async (id: string) => {
+    const result = await Course.findById(id)
+    return result
+}
+
 export const CourseService = {
-    createCourseIntoDB
+    createCourseIntoDB,
+    getAllCourses,
+    getSingleCourse
 }

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 const tagValidationSchema = z.object({
     name: z.string({
+        required_error: "name is required.",
         invalid_type_error: "name must be string"
     }).trim(),
     isDeleted: z.boolean().default(false)
@@ -11,31 +12,42 @@ const tagValidationSchema = z.object({
 
 const courseValidationSchema = z.object({
     title: z.string({
-        invalid_type_error: "title must be string"
+        required_error: "title is required.",
+        invalid_type_error: "title must be string."
     }).trim(),
     instructor: z.string({
-        invalid_type_error: "instructor must be string"
+        required_error: "instructor is required.",
+        invalid_type_error: "instructor must be string."
     }).trim(),
     categoryId: z.string(),
     price: z.number({
-        invalid_type_error: 'price must be number'
+        required_error: "price is required.",
+        invalid_type_error: 'price must be number.'
     }),
-    tags: z.array(tagValidationSchema).min(1, "must contain 1 or more item"),
-    startDate: z.string(),
-    endDate: z.string(),
+    tags: z.array(tagValidationSchema).min(1, "must contain 1 or more item."),
+    startDate: z.string({
+        required_error: "startDate is required.",
+    }),
+    endDate: z.string({
+        required_error: "endDate is required.",
+    }),
     language: z.string({
-        invalid_type_error: 'language must be string'
+        required_error: "language is required.",
+        invalid_type_error: 'language must be string.'
     }),
     provider: z.string({
-        invalid_type_error: 'provider must be string'
+        required_error: "provider is required.",
+        invalid_type_error: 'provider must be string.'
     }),
     durationInWeeks: z.number(),
     details: z.object({
         level: z.string({
-            invalid_type_error: "level must be string"
+            required_error: "level is required.",
+            invalid_type_error: "level must be string."
         }).trim(),
         description: z.string({
-            invalid_type_error: "level must be description"
+            required_error: "description is required.",
+            invalid_type_error: "level must be description."
         }).trim()
     })
 })

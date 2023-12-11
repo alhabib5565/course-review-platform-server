@@ -72,7 +72,6 @@ const courseSchema = new Schema<TCourse>({
 
 
 courseSchema.pre('save', function (next) {
-    console.log('model', this)
     const startDate = new Date(this.startDate)
     const endDate = new Date(this.endDate)
     const weeks = 1000 * 60 * 60 * 24 * 7
