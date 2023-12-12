@@ -19,7 +19,7 @@ const getAllCategories = catchAsync(async (req: Request, res: Response,) => {
     const result = await CategoryService.getAllCategories()
     sendSuccessResponse(res, {
         statusCode: 200,
-        message: " Category retrieved successfully",
+        message: " Categories retrieved successfully",
         data: result
     })
 

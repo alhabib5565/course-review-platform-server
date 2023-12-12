@@ -25,7 +25,7 @@ const globlaErrorHandler = async (err: any, req: Request, res: Response, next: N
         errFormate = handleCastError(err)
     } else if (err && err.code === 11000) {
         errFormate.message = 'Duplicat value'
-        errFormate.errorMessage = `${err.keyValue.title} already exist`
+        errFormate.errorMessage = `${Object.values(err.keyValue)} already exist`
     } else if (err instanceof Error) {
         errFormate.message = "unknown error"
     }
