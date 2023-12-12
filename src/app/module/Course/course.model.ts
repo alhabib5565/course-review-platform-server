@@ -56,7 +56,6 @@ const courseSchema = new Schema<TCourse>({
     },
     durationInWeeks: {
         type: Number,
-        required: [true, "durationInWeeks is required"]
     },
     details: {
         level: {

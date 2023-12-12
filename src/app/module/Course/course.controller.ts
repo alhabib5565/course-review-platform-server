@@ -29,13 +29,25 @@ const getSingleCourse = catchAsync(async (req: Request, res: Response,) => {
     const result = await CourseService.getSingleCourse(courseId)
     sendSuccessResponse(res, {
         statusCode: 200,
-        message: "Course retrieved successfully",
+        message: "Course and Reviews retrieved successfully",
         data: result
     })
-
 })
+
+const updateCourse = catchAsync(async (req: Request, res: Response,) => {
+    const { courseId } = req.params
+    // console.log('course controller', req.body)
+    const result = await CourseService.updateCourseInfoIntoDB(courseId, req.body)
+    sendSuccessResponse(res, {
+        statusCode: 200,
+        message: "Course updated successfully",
+        data: result
+    })
+})
+
 export const courseController = {
     createCourse,
     getAllCourses,
-    getSingleCourse
+    getSingleCourse,
+    updateCourse
 }

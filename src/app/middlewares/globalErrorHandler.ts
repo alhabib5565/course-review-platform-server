@@ -5,14 +5,15 @@ import { ZodError } from "zod";
 import { handleZodError } from "../errorHandler/handleZodError";
 import handleCastError from "../errorHandler/handleCastError";
 import { handleValidationError } from "../errorHandler/handleValidationError";
+import { AppError } from "../errorHandler/appError";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-unused-vars
 const globlaErrorHandler = async (err: any, req: Request, res: Response, next: NextFunction) => {
-    const statusCode = 500
+    let statusCode = 500
 
     let errFormate = {
-        message: "something went wrong",
+        message: err.message || "something went wrong",
         errorMessage: "",
     }
 
@@ -26,8 +27,11 @@ const globlaErrorHandler = async (err: any, req: Request, res: Response, next: N
     } else if (err && err.code === 11000) {
         errFormate.message = 'Duplicat value'
         errFormate.errorMessage = `${Object.values(err.keyValue)} already exist`
-    } else if (err instanceof Error) {
-        errFormate.message = "unknown error"
+    } else if (err instanceof AppError) {
+        errFormate.message = err.message
+        statusCode = err.statusCode
+    } else {
+        errFormate.message = err.message
     }
 
     res.status(statusCode).json({

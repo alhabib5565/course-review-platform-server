@@ -6,8 +6,15 @@ import { courseValidations } from "./course.validation";
 
 const router = Router()
 
-router.post("/course", validationData(courseValidations.courseValidationSchema), courseController.createCourse)
+router.post(
+    "/course",
+    validationData(courseValidations.createCourseValidationSchema),
+    courseController.createCourse)
+router.put(
+    "/courses/:courseId",
+    validationData(courseValidations.updateCourseValidationSchema),
+    courseController.updateCourse)
 router.get("/courses", courseController.getAllCourses)
-router.get("/course/:courseId", courseController.getSingleCourse)
+router.get("/courses/:courseId/reviews", courseController.getSingleCourse)
 
 export const courseRoute = router
