@@ -3,6 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import { ZodError } from "zod";
 import { handleZodError } from "../errorHandler/handleZodError";
+import handleCastError from "../errorHandler/handleCastError";
+import { handleValidationError } from "../errorHandler/handleValidationError";
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-unused-vars
@@ -10,33 +12,30 @@ const globlaErrorHandler = async (err: any, req: Request, res: Response, next: N
     const statusCode = 500
 
     let errFormate = {
-        message: "Validation Error",
-        errorMessage: "gender is required. email is required.",
+        message: "something went wrong",
+        errorMessage: "",
     }
 
 
     if (err instanceof ZodError) {
         errFormate = handleZodError(err)
     } else if (err instanceof mongoose.Error.ValidationError) {
-        // console.log('valdation error')
-        const er = Object.values(err.errors).map(errorDetails => {
-            return {
-                path: errorDetails.path,
-                message: errorDetails.message
-            }
-        })
-        console.log(er)
+        errFormate = handleValidationError(err)
     } else if (err instanceof mongoose.Error.CastError) {
-        console.log('castError')
+        errFormate = handleCastError(err)
     } else if (err && err.code === 11000) {
-        console.log('duplicat error')
+        errFormate.message = 'Duplicat value'
+        errFormate.errorMessage = `${err.keyValue.title} already exist`
+    } else if (err instanceof Error) {
+        errFormate.message = "unknown error"
     }
 
     res.status(statusCode).json({
         success: false,
         message: errFormate.message,
         errorMessage: errFormate.errorMessage,
-        errorDetails: err
+        errorDetails: err,
+        stack: err.stack
     })
 }
 
