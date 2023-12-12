@@ -3,6 +3,7 @@ import { AppError } from "../../errorHandler/appError";
 import { TCourse } from "./course.interface";
 import { Course } from "./course.model";
 import { ObjectId } from "mongodb";
+import { Review } from "../Review/review.model";
 
 const createCourseIntoDB = async (payload: TCourse) => {
     const result = await Course.create(payload)
@@ -29,9 +30,35 @@ const getSingleCourse = async (id: string) => {
                 foreignField: "courseId",
                 as: 'reviews'
             }
+        },
+    ])
+    return { course: result[0] }
+}
+
+const getBestCourse = async () => {
+    const bestCourse = await Review.aggregate([
+        {
+            $group: {
+                _id: "$courseId",
+                averageRating: { $avg: "$rating" },
+                reviewCount: { $sum: 1 }
+            }
+        },
+        {
+            $sort: { averageRating: -1 }
+        },
+        {
+            $limit: 1
         }
     ])
-    return result
+    const { averageRating, reviewCount, _id } = bestCourse[0];
+
+    const result = await Course.findById(_id, { __v: 0 })
+    return {
+        course: result,
+        averageRating,
+        reviewCount
+    }
 }
 
 const updateCourseInfoIntoDB = async (id: string, payload: Partial<TCourse>) => {
@@ -112,5 +139,6 @@ export const CourseService = {
     createCourseIntoDB,
     getAllCourses,
     getSingleCourse,
-    updateCourseInfoIntoDB
+    updateCourseInfoIntoDB,
+    getBestCourse
 }

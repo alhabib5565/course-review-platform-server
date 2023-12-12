@@ -45,9 +45,20 @@ const updateCourse = catchAsync(async (req: Request, res: Response,) => {
     })
 })
 
+const bestCourse = catchAsync(async (req: Request, res: Response,) => {
+    // console.log('course controller', req.body)
+    const result = await CourseService.getBestCourse()
+    sendSuccessResponse(res, {
+        statusCode: 200,
+        message: "Best course retrieved successfully",
+        data: result
+    })
+})
+
 export const courseController = {
     createCourse,
     getAllCourses,
     getSingleCourse,
-    updateCourse
+    updateCourse,
+    bestCourse
 }
