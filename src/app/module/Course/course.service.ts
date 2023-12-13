@@ -10,9 +10,47 @@ const createCourseIntoDB = async (payload: TCourse) => {
     return result
 }
 
-const getAllCourses = async () => {
-    const result = await Course.find()
-    return result
+const getAllCourses = async (query: Record<string, unknown>) => {
+    const searchableFields = ["provider", "language", "title", "instructor"]
+
+    console.log('query', query)
+    // copy query fields from query
+    const queryObj = { ...query }
+
+    const excludedFields = ["page", "limit", "searchTerm", "sortBy", "sortOrder"]
+    // delete constant field from queryObj
+    excludedFields.forEach(excludeField => delete queryObj[excludeField])
+    console.log('queryObj', queryObj)
+    let searchTerm = ''
+    if (query.searchTerm) {
+        searchTerm = query.searchTerm as string
+    }
+
+    const search = searchableFields.map(serarcField => ({
+        [serarcField]: { $regex: searchTerm, $options: 'i' }
+    }))
+
+    // search query [partial match]
+    const searchQuery = Course.find({ $or: search })
+
+    //filter query [exat match]
+    const filterQuery = searchQuery.find(queryObj)
+
+    // for paginate query
+    const page = Number(query.page) || 1
+    const limit = Number(query.limit) || 10
+    const skip = (page - 1) * limit
+    const paginateQuery = filterQuery.skip(skip).limit(limit)
+
+    // for sortig 
+    let sortString = '' || "title"
+    if (query.sortBy && query.sortOrder) {
+        const sortOrder = query.sortOrder
+        const sortBy = query.sortBy
+        sortString = `${sortOrder === "desc" ? "-" : ''}${sortBy}`
+    }
+    const sortQuery = await paginateQuery.sort(sortString)
+    return sortQuery
 }
 
 const getSingleCourse = async (id: string) => {
