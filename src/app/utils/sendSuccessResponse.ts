@@ -4,6 +4,11 @@ type TResponseData<T> = {
     statusCode?: number
     message: string,
     data: T
+    meta?: {
+        page: number,
+        limit: number,
+        total: number
+    },
 }
 
 
@@ -12,7 +17,12 @@ const sendSuccessResponse = <T>(res: Response, data: TResponseData<T>) => {
         success: true,
         statusCode: data.statusCode,
         message: data.message,
-        data: data.data
+        meta: {
+            page: 1,
+            limit: 10,
+            total: 50
+        },
+        data: data.data,
     })
 }
 

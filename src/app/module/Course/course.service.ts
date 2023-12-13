@@ -11,13 +11,17 @@ const createCourseIntoDB = async (payload: TCourse) => {
 }
 
 const getAllCourses = async (query: Record<string, unknown>) => {
-    const searchableFields = ["provider", "language", "title", "instructor"]
+    const searchableFields = ["provider", "language", "title", "instructor",]
 
     console.log('query', query)
     // copy query fields from query
     const queryObj = { ...query }
 
-    const excludedFields = ["page", "limit", "searchTerm", "sortBy", "sortOrder"]
+    if (query && query.minPrice && query.maxPrice) {
+        queryObj.price = { $gte: query.minPrice, $lte: query.maxPrice }
+    }
+
+    const excludedFields = ["page", "limit", "searchTerm", "sortBy", "sortOrder", "minPrice", "maxPrice",]
     // delete constant field from queryObj
     excludedFields.forEach(excludeField => delete queryObj[excludeField])
     console.log('queryObj', queryObj)
@@ -49,8 +53,15 @@ const getAllCourses = async (query: Record<string, unknown>) => {
         const sortBy = query.sortBy
         sortString = `${sortOrder === "desc" ? "-" : ''}${sortBy}`
     }
-    const sortQuery = await paginateQuery.sort(sortString)
-    return sortQuery
+    //{ price: { $lt: 1000, $gt: 50 } }
+    const result = await paginateQuery.sort(sortString)
+    const totalDocument = await Course.estimatedDocumentCount()
+    return {
+        page,
+        limit,
+        total: totalDocument,
+        result,
+    }
 }
 
 const getSingleCourse = async (id: string) => {
