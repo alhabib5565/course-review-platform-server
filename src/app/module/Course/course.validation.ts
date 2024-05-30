@@ -1,5 +1,9 @@
+import { Types } from "mongoose";
 import { z } from "zod";
 
+const objectIdSchema = z.string().refine((val) => Types.ObjectId.isValid(val), {
+    message: "Invalid ObjectId",
+});
 
 const createTagValidationSchema = z.object({
     name: z.string({
@@ -19,7 +23,7 @@ const createCourseValidationSchema = z.object({
         required_error: "instructor is required.",
         invalid_type_error: "instructor must be string."
     }).trim(),
-    categoryId: z.string(),
+    categoryId: objectIdSchema,
     price: z.number({
         required_error: "price is required.",
         invalid_type_error: 'price must be number.'
@@ -48,7 +52,9 @@ const createCourseValidationSchema = z.object({
             required_error: "description is required.",
             invalid_type_error: "level must be description."
         }).trim()
-    })
+    }),
+    createdBy: objectIdSchema
+
 })
 const updateTagValidationSchema = z.object({
     name: z.string({

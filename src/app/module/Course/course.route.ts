@@ -18,4 +18,4 @@ router.get("/courses", courseController.getAllCourses)
 router.get("/courses/:courseId/reviews", courseController.getSingleCourse)
 router.get("/course/best", courseController.bestCourse)
 
-export const courseRoute = router
+export const courseRoutes = router

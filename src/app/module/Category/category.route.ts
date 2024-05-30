@@ -7,4 +7,4 @@ const router = Router()
 
 router.post('/categories', validationData(categoryValidations), CategoryController.createCategory)
 router.get('/categories', CategoryController.getAllCategories)
-export const categoryRoute = router
+export const categoryRoutes = router

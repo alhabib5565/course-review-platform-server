@@ -17,11 +17,6 @@ const sendSuccessResponse = <T>(res: Response, data: TResponseData<T>) => {
         success: true,
         statusCode: data.statusCode,
         message: data.message,
-        meta: {
-            page: 1,
-            limit: 10,
-            total: 50
-        },
         data: data.data,
     })
 }

@@ -161,17 +161,15 @@ const updateCourseInfoIntoDB = async (id: string, payload: Partial<TCourse>) => 
             if (!addNewTags) {
                 throw new AppError('Course info update failed', 400)
             }
-            const basicInfo = await Course.findByIdAndUpdate(id, modifiedCourseInfo, {
-                new: true,
-                runValidators: true,
-                session
-            })
-            if (!basicInfo) {
-                throw new AppError('Course info update failed', 400)
-            }
         }
-
-
+        const basicInfo = await Course.findByIdAndUpdate(id, modifiedCourseInfo, {
+            new: true,
+            runValidators: true,
+            session
+        })
+        if (!basicInfo) {
+            throw new AppError('Course info update failed', 400)
+        }
 
         await session.commitTransaction()
         await session.endSession()

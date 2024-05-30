@@ -1,7 +1,8 @@
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
 export type TCategory = {
-    name: string
+    name: string,
+    createdBy: Types.ObjectId
 }
 
 const categorySchema = new Schema<TCategory>({
@@ -9,6 +10,11 @@ const categorySchema = new Schema<TCategory>({
         type: String,
         required: [true, "category name is required"],
         unique: true
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
     }
 })
 
