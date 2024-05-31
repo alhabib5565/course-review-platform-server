@@ -1,7 +1,7 @@
 import { USER_ROLE, USER_STATUS } from "./user.constant"
 
 export type TUser = {
-    userName: string
+    username: string
     email: string
     password: string
     role: TUser_Role

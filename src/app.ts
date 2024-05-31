@@ -5,6 +5,8 @@ import globlaErrorHandler from './app/middlewares/globalErrorHandler';
 import { categoryRoutes } from './app/module/Category/category.route';
 import { reviewRoutes } from './app/module/Review/review.route';
 import { userRoutes } from './app/module/User/user.route';
+import { authRoutes } from './app/module/Auth/auth.route';
+
 const app = exress();
 app.use(exress.json())
 app.use(cors())
@@ -17,6 +19,7 @@ app.use('/api/v1/courses', courseRoutes)
 app.use('/api/v1/categories', categoryRoutes)
 app.use('/api/v1/reviews', reviewRoutes)
 app.use('/api/v1/users', userRoutes)
+app.use('/api/v1/auth', authRoutes)
 
 // global error handler 
 app.use(globlaErrorHandler)
