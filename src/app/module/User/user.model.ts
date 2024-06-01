@@ -1,8 +1,15 @@
 import { Schema, model } from "mongoose";
-import { TUser } from "./user.interface";
+import { TPasswordHistory, TUser } from "./user.interface";
 import { USER_ROLE, USER_STATUS } from "./user.constant";
 import bcrypt from 'bcrypt';
 import { config } from "../../config";
+
+const passwordHistorySchema = new Schema<TPasswordHistory>({
+    password: String,
+    changed_at: Date
+}, {
+    _id: false
+})
 
 const userSchema = new Schema<TUser>({
     username: {
@@ -17,6 +24,10 @@ const userSchema = new Schema<TUser>({
         type: String,
         required: [true, 'Password is required'],
         select: 0
+    },
+    passwordHistory: {
+        type: [passwordHistorySchema],
+        default: []
     },
     role: {
         type: String,
