@@ -15,7 +15,7 @@ const createCourse = catchAsync(async (req: Request, res: Response,) => {
 })
 
 const getAllCourses = catchAsync(async (req: Request, res: Response,) => {
-    const { result, page, limit, total } = await CourseService.getAllCourses(req.query)
+    const result = await CourseService.getAllCourses(req.query)
     // sendSuccessResponse(res, {
     //     statusCode: 200,
     //     message: " Courses retrieved successfully",
@@ -30,11 +30,6 @@ const getAllCourses = catchAsync(async (req: Request, res: Response,) => {
         success: true,
         statusCode: 200,
         message: "Courses retrieved successfully",
-        meta: {
-            page: page,
-            limit: limit,
-            total: total
-        },
         data: result
     })
 

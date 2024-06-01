@@ -15,6 +15,7 @@ router.post(
 )
 router.put(
     "/:courseId",
+    auth("admin"),
     validationData(courseValidations.updateCourseValidationSchema),
     courseController.updateCourse
 )
@@ -27,7 +28,7 @@ router.get(
     courseController.getSingleCourse
 )
 router.get(
-    "/course/best",
+    "/best",
     courseController.bestCourse
 )
 

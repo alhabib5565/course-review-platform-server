@@ -2,13 +2,15 @@ import { Router } from "express";
 import { validationData } from "../../middlewares/validateData";
 import { ReviewController } from "./review.controller";
 import { ReviewSchema } from "./review.validation";
+import { auth } from "../../middlewares/auth";
 
 
 
 const router = Router()
 
 router.post(
-    "/create-review",
+    "/",
+    auth("user"),
     validationData(ReviewSchema.reviewValidationSchema),
     ReviewController.createReview
 )

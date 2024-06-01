@@ -16,6 +16,8 @@ const categorySchema = new Schema<TCategory>({
         required: true,
         ref: 'User'
     }
+}, {
+    timestamps: true
 })
 
 

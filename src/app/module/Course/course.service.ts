@@ -4,6 +4,7 @@ import { TCourse } from "./course.interface";
 import { Course } from "./course.model";
 import { ObjectId } from "mongodb";
 import { Review } from "../Review/review.model";
+import QueryBuilder from "../../queryBuilder/queryBuilder";
 
 const createCourseIntoDB = async (payload: TCourse) => {
     const result = await Course.create(payload)
@@ -13,55 +14,73 @@ const createCourseIntoDB = async (payload: TCourse) => {
 const getAllCourses = async (query: Record<string, unknown>) => {
     const searchableFields = ["provider", "language", "title", "instructor",]
 
-    console.log('query', query)
-    // copy query fields from query
-    const queryObj = { ...query }
+    // // copy query fields from query
+    // const queryObj = { ...query }
 
-    if (query && query.minPrice && query.maxPrice) {
-        queryObj.price = { $gte: query.minPrice, $lte: query.maxPrice }
-    }
+    // if (query && query.minPrice && query.maxPrice) {
+    //     queryObj.price = { $gte: query.minPrice, $lte: query.maxPrice }
+    // }
 
-    const excludedFields = ["page", "limit", "searchTerm", "sortBy", "sortOrder", "minPrice", "maxPrice",]
-    // delete constant field from queryObj
-    excludedFields.forEach(excludeField => delete queryObj[excludeField])
-    console.log('queryObj', queryObj)
-    let searchTerm = ''
-    if (query.searchTerm) {
-        searchTerm = query.searchTerm as string
-    }
+    // const excludedFields = ["page", "limit", "searchTerm", "sortBy", "sortOrder", "minPrice", "maxPrice",]
+    // // delete constant field from queryObj
+    // excludedFields.forEach(excludeField => delete queryObj[excludeField])
+    // let searchTerm = ''
+    // if (query.searchTerm) {
+    //     searchTerm = query.searchTerm as string
+    // }
 
-    const search = searchableFields.map(serarcField => ({
-        [serarcField]: { $regex: searchTerm, $options: 'i' }
-    }))
+    // const search = searchableFields.map(serarcField => ({
+    //     [serarcField]: { $regex: searchTerm, $options: 'i' }
+    // }))
 
-    // search query [partial match]
-    const searchQuery = Course.find({ $or: search })
+    // // search query [partial match]
+    // const searchQuery = Course.find({ $or: search })
 
-    //filter query [exat match]
-    const filterQuery = searchQuery.find(queryObj)
+    // //filter query [exat match]
+    // const filterQuery = searchQuery.find(queryObj)
 
-    // for paginate query
-    const page = Number(query.page) || 1
-    const limit = Number(query.limit) || 10
-    const skip = (page - 1) * limit
-    const paginateQuery = filterQuery.skip(skip).limit(limit)
+    // // for paginate query
+    // const page = Number(query.page) || 1
+    // const limit = Number(query.limit) || 10
+    // const skip = (page - 1) * limit
+    // const paginateQuery = filterQuery.skip(skip).limit(limit)
 
-    // for sortig 
-    let sortString = '' || "title"
-    if (query.sortBy && query.sortOrder) {
-        const sortOrder = query.sortOrder
-        const sortBy = query.sortBy
-        sortString = `${sortOrder === "desc" ? "-" : ''}${sortBy}`
-    }
-    //{ price: { $lt: 1000, $gt: 50 } }
-    const result = await paginateQuery.sort(sortString)
-    const totalDocument = await Course.estimatedDocumentCount()
+    // // for sortig 
+    // let sortString = '' || "title"
+    // if (query.sortBy && query.sortOrder) {
+    //     const sortOrder = query.sortOrder
+    //     const sortBy = query.sortBy
+    //     sortString = `${sortOrder === "desc" ? "-" : ''}${sortBy}`
+    // }
+    // //{ price: { $lt: 1000, $gt: 50 } }
+    // const result = await paginateQuery.sort(sortString)
+    // const totalDocument = await Course.estimatedDocumentCount()
+    // return {
+    //     page,
+    //     limit,
+    //     total: totalDocument,
+    //     result,
+    // }
+
+    const courseQuery = new QueryBuilder(
+        Course.find()
+            .populate('createdBy'),
+        query
+    )
+        .search(searchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+
+    const meta = await courseQuery.countTotal();
+    const result = await courseQuery.modelQuery;
+
     return {
-        page,
-        limit,
-        total: totalDocument,
+        meta,
         result,
-    }
+    };
+
 }
 
 const getSingleCourse = async (id: string) => {
